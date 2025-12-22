@@ -1,14 +1,11 @@
 package com.bobocode.basics;
 
 import com.bobocode.basics.util.BaseEntity;
-import com.bobocode.util.ExerciseNotCompletedException;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;x
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * {@link CrazyGenerics} is an exercise class. It consists of classes, interfaces and methods that should be updated
@@ -71,19 +68,13 @@ public class CrazyGenerics <T> {
      *
      * @param <T> value type
      */
-    public class MaxHolder<T extends Comparable<T>> {
+    public static class MaxHolder<T extends Comparable<? super T>> {
         private T max;
 
         public MaxHolder(T max) {
             this.max = max;
         }
 
-        /**
-         * Puts a new value to the holder. A new value is stored to the max,
-         * only if it is greater than current max value.
-         *
-         * @param val a new value
-         */
         public void put(T val) {
             if (val != null && (max == null || val.compareTo(max) > 0)) {
                 max = val;
@@ -102,13 +93,7 @@ public class CrazyGenerics <T> {
      *
      * @param <T> – the type of objects that can be processed
      */
-    public interface StrictProcessor<T extends Serializable & Comparable<T>> {
-
-        /**
-         * Processes the given object.
-         *
-         * @param obj the object to process
-         */
+    public interface StrictProcessor<T extends Serializable & Comparable<? super T>> {
         void process(T obj);
     }
 
@@ -119,10 +104,9 @@ public class CrazyGenerics <T> {
      * @param <T> – a type of the entity that should be a subclass of {@link BaseEntity}
      * @param <C> – a type of any collection
      */
-    interface CollectionRepository <T extends BaseEntity, C>{ // todo: update interface according to the javadoc
+    interface CollectionRepository<T extends BaseEntity, C extends Collection<T>> {
         void save(T entity);
-
-        Collection<C> getEntityCollection();
+        C getEntityCollection();  // Returns C, not Collection<C>
     }
 
     /**
@@ -132,10 +116,10 @@ public class CrazyGenerics <T> {
      * @param <T> – a type of the entity that should be a subclass of {@link BaseEntity}
      */
     public interface ListRepository<T extends BaseEntity>
-            extends CollectionRepository<T> {
+            extends CollectionRepository<T, List<T>> {
 
         @Override
-        List<T> getEntityCollection();
+        List<T> getEntityCollection();  // Returns List<T>, not Collection<List<T>>
     }
 
     /**
@@ -168,7 +152,7 @@ public class CrazyGenerics <T> {
          *
          * @param list
          */
-        public static <T> void print (List<T> list) {
+        public static void print (List<?> list) {
             // todo: refactor it so the list of any type can be printed, not only integers
             list.forEach(element -> System.out.println(" – " + element));
         }
@@ -181,11 +165,11 @@ public class CrazyGenerics <T> {
          * @param entities provided collection of entities
          * @return true if at least one of the elements has null id
          */
-        public static <T extends BaseEntity> boolean hasNewEntities(Collection<T> entities) {
+        public static boolean hasNewEntities(Collection<? extends BaseEntity> entities) {
             if (entities == null || entities.isEmpty()) {
                 return false;
             }
-            return entities.stream().anyMatch(entity -> entity.getId() == null);
+            return entities.stream().anyMatch(entity -> entity.getUuid() == null);
         }
 
 
@@ -198,15 +182,16 @@ public class CrazyGenerics <T> {
          * @param validationPredicate criteria for validation
          * @return true if all entities fit validation criteria
          */
-        public static <T extends BaseEntity> boolean isValidCollection(
-                Collection<T> entities,
-                Predicate<T> validationPredicate
+        public static boolean isValidCollection(
+                Collection<? extends BaseEntity> entities,
+                Predicate<? super BaseEntity> validationPredicate
         ) {
             if (entities == null || entities.isEmpty()) {
-                return true; // or false depending on your validation rules
+                return true;
             }
             return entities.stream().allMatch(validationPredicate);
         }
+
 
 
         /**
@@ -242,7 +227,7 @@ public class CrazyGenerics <T> {
          * @return optional max value
          */
         // todo: create a method and implement its logic manually without using util method from JDK
-        ublic static <T> Optional<T> findMax(Iterable<T> elements, Comparator<? super T> comparator) {
+        public static <T> Optional<T> findMax(Iterable<T> elements, Comparator<? super T> comparator) {
             if (elements == null) {
                 return Optional.empty();
             }

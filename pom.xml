@@ -18,6 +18,7 @@
     <modules>
         <module>1-0-java-basics</module>
         <module>5-0-functional-programming</module>
+        <module>java-fundamentals-util</module>
     </modules>
 
     <dependencies>
@@ -27,6 +28,12 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+            <dependency>
+                <groupId>com.devskiller</groupId>
+                <artifactId>jfairy</artifactId>
+                <version>0.6.5</version>
+            </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>

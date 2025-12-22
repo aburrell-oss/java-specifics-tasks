@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>com.bobocode</groupId>
-            <artifactId>java-fundamentals-exercises</artifactId>
+            <artifactId>java-fundamentals-util</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
