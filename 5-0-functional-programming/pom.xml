@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>com.bobocode</groupId>
-            <artifactId>java-fundamentals-util</artifactId>
+            <artifactId>java-fundamentals-exercises</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
